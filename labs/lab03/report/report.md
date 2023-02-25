@@ -1,10 +1,10 @@
 ---
 ## Front matter
-title: "Шаблон отчёта по лабораторной работе"
-subtitle: "Простейший вариант"
-author: "Дмитрий Сергеевич Кулябов"
+title: "Отчет по лабораторной работе №3"
+subtitle: "Markdown"
+author: "Данила Андреевич Стариков"
 
-## Generic otions
+## Generic options
 lang: ru-RU
 toc-title: "Содержание"
 
@@ -15,8 +15,8 @@ csl: pandoc/csl/gost-r-7-0-5-2008-numeric.csl
 ## Pdf output format
 toc: true # Table of contents
 toc-depth: 2
-lof: true # List of figures
-lot: true # List of tables
+lof: false # List of figures
+lot: false # List of tables
 fontsize: 12pt
 linestretch: 1.5
 papersize: a4
@@ -68,52 +68,75 @@ header-includes:
 
 # Цель работы
 
-Здесь приводится формулировка цели лабораторной работы. Формулировки
-цели для каждой лабораторной работы приведены в методических
-указаниях.
-
-Цель данного шаблона --- максимально упростить подготовку отчётов по
-лабораторным работам.  Модифицируя данный шаблон, студенты смогут без
-труда подготовить отчёт по лабораторным работам, а также познакомиться
-с основными возможностями разметки Markdown.
+Научиться оформлять отчёты с помощью легковесного языка разметки Markdown.
 
 # Задание
 
-Здесь приводится описание задания в соответствии с рекомендациями
-методического пособия и выданным вариантом.
-
-# Теоретическое введение
-
-Здесь описываются теоретические аспекты, связанные с выполнением работы.
-
-Например, в табл. @tbl:std-dir приведено краткое описание стандартных каталогов Unix.
-
-: Описание некоторых каталогов файловой системы GNU Linux {#tbl:std-dir}
-
-| Имя каталога | Описание каталога                                                                                                          |
-|--------------|----------------------------------------------------------------------------------------------------------------------------|
-| `/`          | Корневая директория, содержащая всю файловую                                                                               |
-| `/bin `      | Основные системные утилиты, необходимые как в однопользовательском режиме, так и при обычной работе всем пользователям     |
-| `/etc`       | Общесистемные конфигурационные файлы и файлы конфигурации установленных программ                                           |
-| `/home`      | Содержит домашние директории пользователей, которые, в свою очередь, содержат персональные настройки и данные пользователя |
-| `/media`     | Точки монтирования для сменных носителей                                                                                   |
-| `/root`      | Домашняя директория пользователя  `root`                                                                                   |
-| `/tmp`       | Временные файлы                                                                                                            |
-| `/usr`       | Вторичная иерархия для данных пользователя                                                                                 |
-
-Более подробно об Unix см. в [@gnu-doc:bash;@newham:2005:bash;@zarrelli:2017:bash;@robbins:2013:bash;@tannenbaum:arch-pc:ru;@tannenbaum:modern-os:ru].
+Сделать отчет по лабораторной работе №2 в формате Markdown, предоставить в отчет в 3 форматах: `pdf`, `docx`, `md`.
 
 # Выполнение лабораторной работы
 
-Описываются проведённые действия, в качестве иллюстрации даётся ссылка на иллюстрацию (рис. @fig:001).
+Для преобразования файла формата `md` необходимо скачать ПО: утилиту `pandoc` и подходящую ей версию `pandoc-crossref`, дистрибутив `TeX Live` (Рисунок [-@fig:fig01]).
 
-![Название рисунка](image/placeimg_800_600_tech.jpg){#fig:001 width=70%}
+![Установленные версии pandoc, pandoc-crossref и TeX Live.](/home/dastarikov/work/study/2022-2023/Операционные системы/os-intro/labs/lab03/report/image/image01.png){#fig:fig01}
+
+Редактирование отчета по лабораторной работе №2 проводили в программе `gedit` (Рисунок [-@fig:fig02]). 
+
+![Рабочее окно редактора gedit.](/home/dastarikov/work/study/2022-2023/Операционные системы/os-intro/labs/lab03/report/image/image02.png){#fig:fig02}
+
+Для конвертации файла формата `md` в `pdf` и `docx`, в каталоге курса `/home/dastarikov/work/study/2022-2023/Операционные системы/os-intro/labs/lab03/report/` хранится файл `Makefile` ([Листинг 1](#lst1)). Введя в консоли команду `make` из файла `report.md` генерируются  файлы `report.pdf` и `report.docx` (Рисунок [-@fig:fig03]).
+
+![Использование команды make.](/home/dastarikov/work/study/2022-2023/Операционные системы/os-intro/labs/lab03/report/image/image03.png){#fig:fig03}
+
+[Листинг 1. Программа Makefile.]{#lst1}
+```{.makefile .numberLines }
+FILES = $(patsubst %.md, %.docx, $(wildcard *.md))
+FILES += $(patsubst %.md, %.pdf, $(wildcard *.md))
+
+FILTERS =
+OPTIONS =
+PDF_ENGINE =
+PDF_OPTIONS =
+FORMAT_OPTIONS =
+
+### Cross references
+## Use pandoc-xnos (https://github.com/tomduck/pandoc-xnos)
+## Local pandoc-xnos
+FILTERS += --filter pandoc/filters/pandoc_fignos.py \
+	--filter pandoc/filters/pandoc_eqnos.py \
+	--filter pandoc/filters/pandoc_tablenos.py \
+	--filter pandoc/filters/pandoc_secnos.py
+## System-wide pandoc-xnos
+# FILTERS += --filter pandoc-fignos --filter pandoc-eqnos \
+	--filter pandoc-tablenos --filter pandoc-secnos
+## Use pandoc-crossref (https://github.com/lierdakil/pandoc-crossref)
+# FILTERS += --filter pandoc-crossref
+###
+PDF_ENGINE += --pdf-engine=lualatex --pdf-engine-opt=--shell-escape
+OPTIONS += --number-sections
+BIB_OPTIONS = --citeproc
+
+
+%.docx: %.md
+	-pandoc "$<" $(FILTERS) $(OPTIONS) $(BIB_OPTIONS) -o "$@"
+
+%.pdf: %.md
+	-pandoc "$<" $(FILTERS) $(PDF_ENGINE) $(PDF_OPTIONS) \
+	$(BIB_OPTIONS) $(FORMAT_OPTIONS) $(OPTIONS) -o "$@"
+
+all: $(FILES)
+
+
+clean:
+	-rm $(FILES) *~
+
+cleanall: clean
+```
+
+Все изображения, использованные в отчете, хранятся в отдельном каталоге `/home/dastarikov/work/study/2022-2023/Операционные системы/os-intro/labs/lab02/report/image`.
+
+По выполнении работы, все изменения загружены на Github.
 
 # Выводы
 
-Здесь кратко описываются итоги проделанной работы.
-
-# Список литературы{.unnumbered}
-
-::: {#refs}
-:::
+В рамках лабораторной работы познакомились с языком разметки Markdown, научились конвертировать файлы `md` в `pdf` и `docx`, пользуясь утилитами `pandoc`, `pandoc-crossref` и дистрибутивом `TeX Live`.
